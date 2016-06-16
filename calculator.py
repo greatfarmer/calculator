@@ -1,13 +1,11 @@
 import sys
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
-newNum = 0
-extNum = 0
-result = 0
+cnt = 0
 
-class Example(QtGui.QWidget):
+class Form(QtGui.QWidget):
     def __init__(self):
-        super(Example, self).__init__()
+        super(Form, self).__init__()
         self.initUI()
 
     def initUI(self):
@@ -33,6 +31,10 @@ class Example(QtGui.QWidget):
                 button.clicked.connect(self.btnNum)
             elif name == '=':
                 button.clicked.connect(self.btnEq)
+            elif name == 'Close':
+                button.clicked.connect(QtCore.QCoreApplication.instance().quit)
+            elif name == 'Cls':
+                button.clicked.connect(self.btnCls)
             else:
                 button.clicked.connect(self.btnOp)
         
@@ -52,38 +54,48 @@ class Example(QtGui.QWidget):
         if self.line.text() == "":
             self.line.setText(newNum)
         else:
-            self.line.setText(self.line.text() + newNum)
+            newNum = self.line.text() + newNum
+            self.line.setText(newNum)
     
     def btnOp(self):
-        global newNum
-        global extNum
-        global funC
+        global newNum, extNum, funC
 
         funC = self.sender()
         extNum = newNum
         self.line.clear()
 
     def btnEq(self):
-        global newNum
-        global extNum
-        global result
-        global funC
+        global newNum, extNum, result, funC, cnt
+        
+        if cnt == 0:
+            result = int(extNum)
 
         if funC.text() == '+':
-            result = int(extNum) + int(newNum)                 
+            result += int(newNum)
         elif funC.text() == '-':
-            result = int(extNum) - int(newNum)
+            result -= int(newNum)
         elif funC.text() == '*':
-            result = int(extNum) * int(newNum)
+            result *= int(newNum)
         elif funC.text() == '/':
-            result = int(extNum) / int(newNum)
+            result /= int(newNum)
 
         self.line.setText(str(result))
+        cnt += 1
+
+    def btnCls(self):
+        global result, newNum, extNum, cnt
+
+        newNum = 0
+        extNum = 0
+        result = 0
+        cnt = 0
+        self.line.clear()
+        
 
 
 def main():
     app = QtGui.QApplication(sys.argv)
-    ex = Example()
+    f = Form()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
