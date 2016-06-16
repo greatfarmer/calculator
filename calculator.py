@@ -1,6 +1,10 @@
 import sys
 from PyQt4 import QtGui
 
+newNum = 0
+extNum = 0
+result = 0
+
 class Example(QtGui.QWidget):
     def __init__(self):
         super(Example, self).__init__()
@@ -27,6 +31,8 @@ class Example(QtGui.QWidget):
 
             if name.isdigit() == True:
                 button.clicked.connect(self.btnNum)
+            elif name == '=':
+                button.clicked.connect(self.btnEq)
             else:
                 button.clicked.connect(self.btnOp)
         
@@ -38,19 +44,41 @@ class Example(QtGui.QWidget):
         self.show()
 
     def btnNum(self):
+        global newNum
+
         sender = self.sender()
+        newNum = sender.text()
 
         if self.line.text() == "":
-            self.line.setText(sender.text())
+            self.line.setText(newNum)
         else:
-            self.line.setText(self.line.text() + sender.text())
+            self.line.setText(self.line.text() + newNum)
     
     def btnOp(self):
-        sender = self.sender()
+        global newNum
+        global extNum
+        global funC
 
-        if sender.text() == '+':
+        funC = self.sender()
+        extNum = newNum
+        self.line.clear()
 
-            self.line.clear()
+    def btnEq(self):
+        global newNum
+        global extNum
+        global result
+        global funC
+
+        if funC.text() == '+':
+            result = int(extNum) + int(newNum)                 
+        elif funC.text() == '-':
+            result = int(extNum) - int(newNum)
+        elif funC.text() == '*':
+            result = int(extNum) * int(newNum)
+        elif funC.text() == '/':
+            result = int(extNum) / int(newNum)
+
+        self.line.setText(str(result))
 
 
 def main():
