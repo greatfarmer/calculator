@@ -26,24 +26,32 @@ class Example(QtGui.QWidget):
             grid.addWidget(button, *position)
 
             if name.isdigit() == True:
-                button.clicked.connect(self.btnClicked)
+                button.clicked.connect(self.btnNum)
+            else:
+                button.clicked.connect(self.btnOp)
         
         self.line = QtGui.QLineEdit()
-
         grid.addWidget(self.line, 5, 0)
-
-        # self.btn1.clicked.connect(self.btn1)
-        # self.btn2.clicked.connect(self.btn2)
-        # self.btn3.clicked.connect(self.plus)
-        # self.btn4.clicked.connect(self.equal)
 
         self.move(300, 150)
         self.setWindowTitle('Calculator')
         self.show()
 
-    def btnClicked(self):
+    def btnNum(self):
         sender = self.sender()
-        self.line.setText(sender.text())
+
+        if self.line.text() == "":
+            self.line.setText(sender.text())
+        else:
+            self.line.setText(self.line.text() + sender.text())
+    
+    def btnOp(self):
+        sender = self.sender()
+
+        if sender.text() == '+':
+
+            self.line.clear()
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
