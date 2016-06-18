@@ -42,7 +42,11 @@ class Form(QtGui.QWidget):
                 button.clicked.connect(self.btnOp)
         
         self.line = QtGui.QLineEdit()
+        self.line.setReadOnly(True)
         grid.addWidget(self.line, 5, 0)
+
+        self.label = QtGui.QLabel()
+        grid.addWidget(self.label, 5, 1)
 
         self.move(300, 150)
         self.setWindowTitle('Calculator')
@@ -59,13 +63,16 @@ class Form(QtGui.QWidget):
         else:
             newNum = self.line.text() + newNum
             self.line.setText(newNum)
-    
-    def btnOp(self):
-        global newNum, extNum, funC
 
-        funC = self.sender()
+        self.label.setText(self.label.text() + sender.text())
+
+    def btnOp(self):
+        global newNum, extNum, funC, lBl
+
+        funC = self.sender().text()
         extNum = newNum
         self.line.clear()
+        self.label.setText(self.label.text() + funC)
 
     def btnEq(self):
         global newNum, extNum, result, funC, cnt
@@ -73,16 +80,20 @@ class Form(QtGui.QWidget):
         if cnt == 0:
             result = int(extNum)
 
-        if funC.text() == '+':
+        if funC == '+':
             result += int(newNum)
-        elif funC.text() == '-':
+        elif funC == '-':
             result -= int(newNum)
-        elif funC.text() == '*':
+        elif funC == '*':
             result *= int(newNum)
-        elif funC.text() == '/':
-            result /= int(newNum)
+        elif funC == '/':
+            if int(newNum) == 0:
+                result = "0으로 나눌 수 없습니다."
+            else:
+                result /= int(newNum)
 
         self.line.setText(str(result))
+
         cnt += 1
 
     def btnCls(self):
@@ -93,9 +104,11 @@ class Form(QtGui.QWidget):
         result = 0
         cnt = 0
         self.line.clear()
+        self.label.clear()
     
     def btnBck(self):
         # '='가 입력된 이후에는 작동하지않도록 설정
+        # Setting diable 'btnBck' after 'btnEq'
         global newNum
 
         self.line.backspace()
@@ -111,6 +124,10 @@ if __name__ == '__main__':
 
 '''수정해야할 것
 1. Bck 한 이후의 숫자를 갖도록 하자. (ok)
-2. 
+2. '='버튼이 입력된 이후에는 'Bck'버튼이 작동하지않도록 설정
+3. 0으로 나누는 문제 (ok)
+4. 레이아웃 문제
+5. 처음에 0이 쓰여지지않게 하는 문제 예를 들어 02, 002 가 나오지 않도록
+6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨.
 
 '''
