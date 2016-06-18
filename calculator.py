@@ -67,16 +67,16 @@ class Form(QtGui.QWidget):
         self.label.setText(self.label.text() + sender.text())
 
     def btnOp(self):
-        global newNum, extNum, funC, lBl
+        global newNum, extNum, result, funC, cnt
 
         funC = self.sender().text()
         extNum = newNum
         self.line.clear()
         self.label.setText(self.label.text() + funC)
-
-    def btnEq(self):
+    
+    def cal(self):
         global newNum, extNum, result, funC, cnt
-        
+
         if cnt == 0:
             result = int(extNum)
 
@@ -92,9 +92,14 @@ class Form(QtGui.QWidget):
             else:
                 result /= int(newNum)
 
+        cnt += 1
+
+    def btnEq(self):
+        global newNum, extNum, result, funC, cnt
+
+        self.cal()
         self.line.setText(str(result))
 
-        cnt += 1
 
     def btnCls(self):
         global result, newNum, extNum, cnt
@@ -129,5 +134,6 @@ if __name__ == '__main__':
 4. 레이아웃 문제
 5. 처음에 0이 쓰여지지않게 하는 문제 예를 들어 02, 002 가 나오지 않도록
 6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨.
+7. global을 쓰지 않고 구현하는 방법
 
 '''
