@@ -2,6 +2,7 @@ import sys
 from PyQt4 import QtGui, QtCore
 
 cnt = 0
+result = 0
 
 class Form(QtGui.QWidget):
     def __init__(self):
@@ -35,6 +36,8 @@ class Form(QtGui.QWidget):
                 button.clicked.connect(QtCore.QCoreApplication.instance().quit)
             elif name == 'Cls':
                 button.clicked.connect(self.btnCls)
+            elif name == 'Bck':
+                button.clicked.connect(self.btnBck)
             else:
                 button.clicked.connect(self.btnOp)
         
@@ -90,8 +93,13 @@ class Form(QtGui.QWidget):
         result = 0
         cnt = 0
         self.line.clear()
-        
+    
+    def btnBck(self):
+        # '='가 입력된 이후에는 작동하지않도록 설정
+        global newNum
 
+        self.line.backspace()
+        newNum = self.line.text()
 
 def main():
     app = QtGui.QApplication(sys.argv)
@@ -100,3 +108,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+'''수정해야할 것
+1. Bck 한 이후의 숫자를 갖도록 하자. (ok)
+2. 
+
+'''
