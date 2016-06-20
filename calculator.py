@@ -59,7 +59,10 @@ class Form(QtGui.QWidget):
         newNum = sender.text()
 
         if self.line.text() == "":
-            self.line.setText(newNum)
+            if newNum == '0':
+                return
+            else:
+                self.line.setText(newNum)
         else:
             newNum = self.line.text() + newNum
             self.line.setText(newNum)
@@ -132,7 +135,7 @@ if __name__ == '__main__':
 2. '='버튼이 입력된 이후에는 'Bck'버튼이 작동하지않도록 설정
 3. 0으로 나누는 문제 (ok)
 4. 레이아웃 문제
-5. 처음에 0이 쓰여지지않게 하는 문제 예를 들어 02, 002 가 나오지 않도록
+5. 처음에 0이 쓰여지지않게 하는 문제 예를 들어 02, 002 가 나오지 않도록 (ok)
 6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨.
 7. global을 쓰지 않고 구현하는 방법
 
