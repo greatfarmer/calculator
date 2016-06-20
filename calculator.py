@@ -2,6 +2,7 @@ import sys
 from PyQt4 import QtGui, QtCore
 
 cnt = 0
+numCnt = 0
 result = 0
 
 class Form(QtGui.QWidget):
@@ -53,7 +54,7 @@ class Form(QtGui.QWidget):
         self.show()
 
     def btnNum(self):
-        global newNum
+        global newNum, extNum, result, funC, cnt, numCnt
 
         sender = self.sender()
         newNum = sender.text()
@@ -66,19 +67,24 @@ class Form(QtGui.QWidget):
         else:
             newNum = self.line.text() + newNum
             self.line.setText(newNum)
+        
+        if numCnt > 0:
+            self.cal()
 
         self.label.setText(self.label.text() + sender.text())
 
     def btnOp(self):
-        global newNum, extNum, result, funC, cnt
+        global newNum, extNum, result, funC, cnt, numCnt
 
         funC = self.sender().text()
         extNum = newNum
         self.line.clear()
         self.label.setText(self.label.text() + funC)
+
+        numCnt += 1
     
     def cal(self):
-        global newNum, extNum, result, funC, cnt
+        global newNum, extNum, result, funC, cnt, numCnt
 
         if cnt == 0:
             result = int(extNum)
@@ -98,19 +104,24 @@ class Form(QtGui.QWidget):
         cnt += 1
 
     def btnEq(self):
-        global newNum, extNum, result, funC, cnt
+        global newNum, extNum, result, funC, cnt, numCnt
 
-        self.cal()
+        if numCnt == 0:
+            self.cal()
+
+        numCnt = 0
+
         self.line.setText(str(result))
-
+        self.label.clear()
 
     def btnCls(self):
-        global result, newNum, extNum, cnt
+        global newNum, extNum, result, funC, cnt, numCnt
 
         newNum = 0
         extNum = 0
         result = 0
         cnt = 0
+        numCnt = 0
         self.line.clear()
         self.label.clear()
     
@@ -136,7 +147,8 @@ if __name__ == '__main__':
 3. 0으로 나누는 문제 (ok)
 4. 레이아웃 문제
 5. 처음에 0이 쓰여지지않게 하는 문제 예를 들어 02, 002 가 나오지 않도록 (ok)
-6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨.
+6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨. (ok)
 7. global을 쓰지 않고 구현하는 방법
+8. 결과가 나온 후 숫자를 입력하면 결과값 삭제
 
 '''
