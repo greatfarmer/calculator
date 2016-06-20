@@ -3,6 +3,7 @@ from PyQt4 import QtGui, QtCore
 
 cnt = 0
 numCnt = 0
+nCnt = 0
 eqCnt = False
 opCnt = False
 result = 0
@@ -57,10 +58,13 @@ class Form(QtGui.QWidget):
         self.show()
 
     def btnNum(self):
-        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
+        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt, nCnt
 
         if eqCnt == True and opCnt == False:
             self.btnCls()
+
+        if nCnt == 0:
+            self.line.clear()
 
         sender = self.sender()
         newNum = sender.text()
@@ -70,40 +74,41 @@ class Form(QtGui.QWidget):
                 return
             else:
                 self.line.setText(newNum)
+                nCnt += 1
         else:
             newNum = self.line.text() + newNum
             self.line.setText(newNum)
-
-        self.label.setText(self.label.text() + sender.text())
+            nCnt += 1
         
         eqCnt = False
-        opCnt = False
+        # opCnt = False
 
         print("newNum =", newNum) 
 
     def btnOp(self):
-        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
+        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
+
+        if numCnt == 0:
+            result = int(newNum)
+        else:
+            self.cal()
 
         funC = self.sender().text()
-        extNum = newNum
         self.line.clear()
-        self.label.setText(self.label.text() + funC)
+        self.line.setText(str(result))
+        if eqCnt == False:
+            self.label.setText(self.label.text() + newNum + funC)
+        else:
+            self.label.setText(self.label.text() + str(result) + funC)
 
         numCnt += 1
         opCnt = True
+        nCnt = 0
 
-        if numCnt > 1:
-            self.cal()
-        
-        print("Oper =", funC)
-        print("extNum =", extNum)
-        print("result =", result)        
+        print("Oper =", funC)    
     
     def cal(self):
-        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
-
-        if cnt == 0:
-            result = int(extNum)
+        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
 
         if funC == '+':
             result += int(newNum)
@@ -116,30 +121,35 @@ class Form(QtGui.QWidget):
                 result = "0으로 나눌 수 없습니다."
             else:
                 result /= int(newNum)
-
-        cnt += 1
+        else:
+            return
 
     def btnEq(self):
-        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
+        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
 
-        self.cal()
+        if newNum != 0:
+            self.cal()
 
-        numCnt = 0
         eqCnt = True
+        funC = 0
 
         self.line.setText(str(result))
         self.label.clear()
 
-        print("final result =", result)
+        print("result =", result)
 
     def btnCls(self):
-        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
+        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
 
         newNum = 0
         extNum = 0
         result = 0
-        cnt = 0
+        funC = 0
         numCnt = 0
+        eqCnt = False
+        opCnt = False
+        nCnt = 0
+
         self.line.clear()
         self.label.clear()
     
@@ -148,8 +158,14 @@ class Form(QtGui.QWidget):
         # Setting diable 'btnBck' after 'btnEq'
         global newNum
 
+        if eqCnt == True:
+            return
+
         self.line.backspace()
-        newNum = self.line.text()
+        if self.line.text() == "":
+            newNum = 0
+        else:
+            newNum = self.line.text()
 
         print("Bck newNum = ", newNum)
 
@@ -163,13 +179,13 @@ if __name__ == '__main__':
 
 '''수정해야할 것
 1. Bck 한 이후의 숫자를 갖도록 하자. (ok)
-2. '='버튼이 입력된 이후에는 'Bck'버튼이 작동하지않도록 설정
+2. '='버튼이 입력된 이후에는 'Bck'버튼이 작동하지않도록 설정 (ok)
 3. 0으로 나누는 문제 (ok)
 4. 레이아웃 문제
 5. 처음에 0이 쓰여지지않게 하는 문제 예를 들어 02, 002 가 나오지 않도록 (ok)
 6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨. (ok)
 7. global을 쓰지 않고 구현하는 방법
-8. 결과가 나온 후 숫자를 입력하면 결과값 삭제
-9. ex) 1+2+12 마지막 2를 지우고 1+2+1 = 5로 나오는 오류
+8. 결과가 나온 후 숫자를 입력하면 결과값 삭제 (ok)
+9. ex) 1+2+12 마지막 2를 지우고 1+2+1 = 5로 나오는 오류 (ok)
 
 '''
