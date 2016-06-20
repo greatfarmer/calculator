@@ -3,7 +3,10 @@ from PyQt4 import QtGui, QtCore
 
 cnt = 0
 numCnt = 0
+eqCnt = False
+opCnt = False
 result = 0
+
 
 class Form(QtGui.QWidget):
     def __init__(self):
@@ -54,7 +57,10 @@ class Form(QtGui.QWidget):
         self.show()
 
     def btnNum(self):
-        global newNum, extNum, result, funC, cnt, numCnt
+        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
+
+        if eqCnt == True and opCnt == False:
+            self.btnCls()
 
         sender = self.sender()
         newNum = sender.text()
@@ -67,14 +73,16 @@ class Form(QtGui.QWidget):
         else:
             newNum = self.line.text() + newNum
             self.line.setText(newNum)
-        
-        if numCnt > 0:
-            self.cal()
 
         self.label.setText(self.label.text() + sender.text())
+        
+        eqCnt = False
+        opCnt = False
+
+        print("newNum =", newNum) 
 
     def btnOp(self):
-        global newNum, extNum, result, funC, cnt, numCnt
+        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
 
         funC = self.sender().text()
         extNum = newNum
@@ -82,9 +90,17 @@ class Form(QtGui.QWidget):
         self.label.setText(self.label.text() + funC)
 
         numCnt += 1
+        opCnt = True
+
+        if numCnt > 1:
+            self.cal()
+        
+        print("Oper =", funC)
+        print("extNum =", extNum)
+        print("result =", result)        
     
     def cal(self):
-        global newNum, extNum, result, funC, cnt, numCnt
+        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
 
         if cnt == 0:
             result = int(extNum)
@@ -104,18 +120,20 @@ class Form(QtGui.QWidget):
         cnt += 1
 
     def btnEq(self):
-        global newNum, extNum, result, funC, cnt, numCnt
+        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
 
-        if numCnt == 0:
-            self.cal()
+        self.cal()
 
         numCnt = 0
+        eqCnt = True
 
         self.line.setText(str(result))
         self.label.clear()
 
+        print("final result =", result)
+
     def btnCls(self):
-        global newNum, extNum, result, funC, cnt, numCnt
+        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt
 
         newNum = 0
         extNum = 0
@@ -132,6 +150,8 @@ class Form(QtGui.QWidget):
 
         self.line.backspace()
         newNum = self.line.text()
+
+        print("Bck newNum = ", newNum)
 
 def main():
     app = QtGui.QApplication(sys.argv)
@@ -150,5 +170,6 @@ if __name__ == '__main__':
 6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨. (ok)
 7. global을 쓰지 않고 구현하는 방법
 8. 결과가 나온 후 숫자를 입력하면 결과값 삭제
+9. ex) 1+2+12 마지막 2를 지우고 1+2+1 = 5로 나오는 오류
 
 '''
