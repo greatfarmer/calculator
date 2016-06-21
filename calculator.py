@@ -1,5 +1,6 @@
 import sys
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import Qt
 
 cnt = 0
 numCnt = 0
@@ -19,13 +20,23 @@ class Form(QtGui.QWidget):
         grid = QtGui.QGridLayout()
         self.setLayout(grid)
 
+        self.line = QtGui.QLineEdit()
+        self.line.setReadOnly(True)
+        self.line.setAlignment(Qt.AlignRight)
+        grid.addWidget(self.line, 1, 0, 1, 4)
+        grid.addWidget
+
+        self.label = QtGui.QLabel()
+        self.label.setAlignment(Qt.AlignRight)
+        grid.addWidget(self.label, 0, 0, 1, 4)
+
         names = ['Cls', 'Bck', '', 'Close',
                 '7', '8', '9', '/',
                 '4', '5', '6', '*',
                 '1', '2', '3', '-',
                 '.', '0', '=', '+']
         
-        positions = [(i, j) for i in range(5) for j in range(4)]
+        positions = [(i, j) for i in range(2, 7) for j in range(4)]
 
         for position, name in zip(positions, names):
             if name == '':
@@ -46,13 +57,6 @@ class Form(QtGui.QWidget):
             else:
                 button.clicked.connect(self.btnOp)
         
-        self.line = QtGui.QLineEdit()
-        self.line.setReadOnly(True)
-        grid.addWidget(self.line, 5, 0)
-
-        self.label = QtGui.QLabel()
-        grid.addWidget(self.label, 5, 1)
-
         self.move(300, 150)
         self.setWindowTitle('Calculator')
         self.show()
@@ -81,7 +85,7 @@ class Form(QtGui.QWidget):
             nCnt += 1
         
         eqCnt = False
-        # opCnt = False
+        opCnt = False
 
         print("newNum =", newNum) 
 
@@ -187,5 +191,7 @@ if __name__ == '__main__':
 7. global을 쓰지 않고 구현하는 방법
 8. 결과가 나온 후 숫자를 입력하면 결과값 삭제 (ok)
 9. ex) 1+2+12 마지막 2를 지우고 1+2+1 = 5로 나오는 오류 (ok)
+10. 1000이 넘어가면 1,000 표시해주기 -> 세 자리숫자 마다 , 표시
+
 
 '''
