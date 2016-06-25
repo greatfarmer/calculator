@@ -7,6 +7,8 @@ numCnt = 0
 nCnt = 0
 eqCnt = False
 opCnt = False
+newNum = 0
+funC = 0
 result = 0
 
 
@@ -16,6 +18,9 @@ class Form(QtGui.QWidget):
         self.initUI()
 
     def initUI(self):
+        #Icon setting (if you doesn't want, del this)
+        self.setWindowIcon(QtGui.QIcon('patrick.jpg'))
+
         #Button setting
         grid = QtGui.QGridLayout()
         self.setLayout(grid)
@@ -54,6 +59,9 @@ class Form(QtGui.QWidget):
                 button.clicked.connect(self.btnCls)
             elif name == 'Bck':
                 button.clicked.connect(self.btnBck)
+            elif name == '.':
+                # not yet.
+                button.clicked.connect(self.btnCls)
             else:
                 button.clicked.connect(self.btnOp)
         
@@ -131,14 +139,18 @@ class Form(QtGui.QWidget):
     def btnEq(self):
         global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
 
+        eqCnt = True
+
+        if numCnt == 0:
+            return
+
         if newNum != 0:
             self.cal()
-
-        eqCnt = True
-        funC = 0
-
+        
         self.line.setText(str(result))
         self.label.clear()
+
+        # funC = 0
 
         print("result =", result)
 
@@ -162,7 +174,7 @@ class Form(QtGui.QWidget):
         # Setting diable 'btnBck' after 'btnEq'
         global newNum
 
-        if eqCnt == True:
+        if eqCnt == True or opCnt == True:
             return
 
         self.line.backspace()
@@ -185,13 +197,18 @@ if __name__ == '__main__':
 1. Bck 한 이후의 숫자를 갖도록 하자. (ok)
 2. '='버튼이 입력된 이후에는 'Bck'버튼이 작동하지않도록 설정 (ok)
 3. 0으로 나누는 문제 (ok)
-4. 레이아웃 문제
+4. 레이아웃 문제 (ok)
 5. 처음에 0이 쓰여지지않게 하는 문제 예를 들어 02, 002 가 나오지 않도록 (ok)
 6. 여러 작업했을 때 에러 ex) 1+2+3이 2+3만 됨. (ok)
 7. global을 쓰지 않고 구현하는 방법
 8. 결과가 나온 후 숫자를 입력하면 결과값 삭제 (ok)
 9. ex) 1+2+12 마지막 2를 지우고 1+2+1 = 5로 나오는 오류 (ok)
 10. 1000이 넘어가면 1,000 표시해주기 -> 세 자리숫자 마다 , 표시
-
+11. '.' 소수점 기능 추가하기
+12. 5/0 햇을때 0이 안뜸
+13. 숫자누르고 바로 = 눌렀을때 오류 (ok)
+14. 함수에 return으로 True, False 하는 방법 (opCnt, eqCnt)
+15. 테스트코드 작성해서 동작해보기
+16. state pattern 구현하기
 
 '''
