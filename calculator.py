@@ -2,13 +2,17 @@ import sys
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
-cnt = 0
-numCnt = 0
-nCnt = 0
-eqCnt = False
-opCnt = False
+
+cntNum = 0
 newNum = 0
+
+clkOp = False
+cntOp = 0
 funC = 0
+
+clkEq = False
+clkDot = False
+
 result = 0
 
 
@@ -25,7 +29,7 @@ class Form(QtGui.QWidget):
         grid = QtGui.QGridLayout()
         self.setLayout(grid)
 
-        self.line = QtGui.QLineEdit()
+        self.line = QtGui.QLineEdit("0")
         self.line.setReadOnly(True)
         self.line.setAlignment(Qt.AlignRight)
         grid.addWidget(self.line, 1, 0, 1, 4)
@@ -60,8 +64,7 @@ class Form(QtGui.QWidget):
             elif name == 'Bck':
                 button.clicked.connect(self.btnBck)
             elif name == '.':
-                # not yet.
-                button.clicked.connect(self.btnCls)
+                button.clicked.connect(self.btnDot)
             else:
                 button.clicked.connect(self.btnOp)
         
@@ -70,78 +73,82 @@ class Form(QtGui.QWidget):
         self.show()
 
     def btnNum(self):
-        global newNum, extNum, result, funC, cnt, numCnt, eqCnt, opCnt, nCnt
+        global newNum, clkEq, clkOp, cntNum
 
-        if eqCnt == True and opCnt == False:
+        if clkEq == True and clkOp == False:
             self.btnCls()
 
-        if nCnt == 0:
+        if cntNum == 0:
             self.line.clear()
+            self.line.setText("0")
 
         sender = self.sender()
         newNum = sender.text()
 
-        if self.line.text() == "":
-            if newNum == '0':
-                return
-            else:
-                self.line.setText(newNum)
-                nCnt += 1
-        else:
-            newNum = self.line.text() + newNum
-            self.line.setText(newNum)
-            nCnt += 1
-        
-        eqCnt = False
-        opCnt = False
 
+        if self.line.text() != "0":
+            newNum = self.line.text() + newNum
+        self.line.setText(newNum)
+        cntNum += 1
+
+        clkOp = False
+        clkEq = False
         print("newNum =", newNum) 
 
     def btnOp(self):
-        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
+        global newNum, result, funC, cntOp, clkEq, clkOp, cntNum
 
-        if numCnt == 0:
-            result = int(newNum)
+        if cntOp == 0:
+            result = float(newNum)
+        elif clkEq == True:
+            funC = 0
         else:
             self.cal()
 
         funC = self.sender().text()
         self.line.clear()
         self.line.setText(str(result))
-        if eqCnt == False:
+
+        if clkEq == False:
             self.label.setText(self.label.text() + newNum + funC)
         else:
             self.label.setText(self.label.text() + str(result) + funC)
 
-        numCnt += 1
-        opCnt = True
-        nCnt = 0
+        cntOp += 1
+        clkOp = True
 
+        cntNum = 0
+        clkEq = False
+        clkDot = False
         print("Oper =", funC)    
     
     def cal(self):
-        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
+        global newNum, result, funC
 
         if funC == '+':
-            result += int(newNum)
+            result += float(newNum)
         elif funC == '-':
-            result -= int(newNum)
+            result -= float(newNum)
         elif funC == '*':
-            result *= int(newNum)
+            result *= float(newNum)
         elif funC == '/':
-            if int(newNum) == 0:
+            if float(newNum) == 0:
                 result = "0으로 나눌 수 없습니다."
             else:
-                result /= int(newNum)
+                result /= float(newNum)
         else:
             return
 
     def btnEq(self):
-        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
+        global newNum, result, funC, cntOp, clkEq, clkOp, cntNum
 
-        eqCnt = True
+        clkEq = True
 
-        if numCnt == 0:
+        cntNum = 0
+        clkOp = False
+        clkDot = False
+
+        if cntOp == 0:
             return
 
         if newNum != 0:
@@ -150,40 +157,65 @@ class Form(QtGui.QWidget):
         self.line.setText(str(result))
         self.label.clear()
 
-        # funC = 0
-
         print("result =", result)
 
     def btnCls(self):
-        global newNum, extNum, result, funC, numCnt, eqCnt, opCnt, nCnt
+        global newNum, result, funC, cntOp, clkEq, clkOp, cntNum
 
+        cntNum = 0
         newNum = 0
-        extNum = 0
-        result = 0
-        funC = 0
-        numCnt = 0
-        eqCnt = False
-        opCnt = False
-        nCnt = 0
 
-        self.line.clear()
+        clkOp = False
+        cntOp = 0
+        funC = 0
+
+        clkEq = False
+        clkDot = False
+
+        result = 0
+
+        self.initLine()
         self.label.clear()
     
     def btnBck(self):
-        # '='가 입력된 이후에는 작동하지않도록 설정
-        # Setting diable 'btnBck' after 'btnEq'
-        global newNum
+        global newNum, clkEq, clkOp
 
-        if eqCnt == True or opCnt == True:
+        if clkEq == True or clkOp == True:
             return
 
         self.line.backspace()
+
+        if self.line.text().count(".") == 0:
+            clkDot = False 
+
         if self.line.text() == "":
             newNum = 0
+            self.line.setText("0")
         else:
             newNum = self.line.text()
 
         print("Bck newNum = ", newNum)
+
+    def btnDot(self):
+        global newNum, clkDot, cntNum
+
+        if clkDot == True:
+            return
+        
+        if clkEq == True or clkOp == True:
+            self.initLine()
+
+        newNum = self.line.text() + "."
+        self.line.setText(newNum)
+
+        clkDot = True
+        cntNum += 1
+
+        print("newNum =", newNum)
+
+    def initLine(self):
+        self.line.clear()
+        self.line.setText("0")
 
 def main():
     app = QtGui.QApplication(sys.argv)
@@ -205,10 +237,11 @@ if __name__ == '__main__':
 9. ex) 1+2+12 마지막 2를 지우고 1+2+1 = 5로 나오는 오류 (ok)
 10. 1000이 넘어가면 1,000 표시해주기 -> 세 자리숫자 마다 , 표시
 11. '.' 소수점 기능 추가하기
-12. 5/0 햇을때 0이 안뜸
+12. 5/0 햇을때 0이 안뜸 (ok)
 13. 숫자누르고 바로 = 눌렀을때 오류 (ok)
-14. 함수에 return으로 True, False 하는 방법 (opCnt, eqCnt)
+14. 함수에 return으로 True, False 하는 방법 (clkOp, clkEq)
 15. 테스트코드 작성해서 동작해보기
 16. state pattern 구현하기
+17. 15/0 이후 0으로 나눌수 없습니다 메시지 후 새롭게 계산하면 안됨
 
 '''
